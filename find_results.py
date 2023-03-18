@@ -117,9 +117,15 @@ class FindInFilesJumpMatchCommand(FindInFilesJumpCommand):
 class BfbClearFilePathCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         folders = sublime.active_window().folders()
+
         for folder in folders:
             path, folder_name = os.path.split(folder)
-            regions = self.view.find_all(path)
+
+            # For Windows FindAll
+            regions = self.view.find_all(path.replace("\\", "\\\\"))
+            # For Window Cscope
+            regions += self.view.find_all(path.replace('\\', '/'))
+
             for r in reversed(regions):
                 self.view.fold(sublime.Region(r.a, r.b+1))
 
